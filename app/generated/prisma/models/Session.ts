@@ -207,7 +207,7 @@ export type SessionGroupByOutputType = {
   id: string
   name: string
   membershipNumber: string
-  phoneNumber: string
+  phoneNumber: string | null
   partySize: number
   isPrivate: boolean
   checkedInAt: Date
@@ -242,7 +242,7 @@ export type SessionWhereInput = {
   id?: Prisma.StringFilter<"Session"> | string
   name?: Prisma.StringFilter<"Session"> | string
   membershipNumber?: Prisma.StringFilter<"Session"> | string
-  phoneNumber?: Prisma.StringFilter<"Session"> | string
+  phoneNumber?: Prisma.StringNullableFilter<"Session"> | string | null
   partySize?: Prisma.IntFilter<"Session"> | number
   isPrivate?: Prisma.BoolFilter<"Session"> | boolean
   checkedInAt?: Prisma.DateTimeFilter<"Session"> | Date | string
@@ -254,7 +254,7 @@ export type SessionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   membershipNumber?: Prisma.SortOrder
-  phoneNumber?: Prisma.SortOrder
+  phoneNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   partySize?: Prisma.SortOrder
   isPrivate?: Prisma.SortOrder
   checkedInAt?: Prisma.SortOrder
@@ -269,7 +269,7 @@ export type SessionWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.SessionWhereInput | Prisma.SessionWhereInput[]
   name?: Prisma.StringFilter<"Session"> | string
   membershipNumber?: Prisma.StringFilter<"Session"> | string
-  phoneNumber?: Prisma.StringFilter<"Session"> | string
+  phoneNumber?: Prisma.StringNullableFilter<"Session"> | string | null
   partySize?: Prisma.IntFilter<"Session"> | number
   isPrivate?: Prisma.BoolFilter<"Session"> | boolean
   checkedInAt?: Prisma.DateTimeFilter<"Session"> | Date | string
@@ -281,7 +281,7 @@ export type SessionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   membershipNumber?: Prisma.SortOrder
-  phoneNumber?: Prisma.SortOrder
+  phoneNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   partySize?: Prisma.SortOrder
   isPrivate?: Prisma.SortOrder
   checkedInAt?: Prisma.SortOrder
@@ -301,7 +301,7 @@ export type SessionScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Session"> | string
   name?: Prisma.StringWithAggregatesFilter<"Session"> | string
   membershipNumber?: Prisma.StringWithAggregatesFilter<"Session"> | string
-  phoneNumber?: Prisma.StringWithAggregatesFilter<"Session"> | string
+  phoneNumber?: Prisma.StringNullableWithAggregatesFilter<"Session"> | string | null
   partySize?: Prisma.IntWithAggregatesFilter<"Session"> | number
   isPrivate?: Prisma.BoolWithAggregatesFilter<"Session"> | boolean
   checkedInAt?: Prisma.DateTimeWithAggregatesFilter<"Session"> | Date | string
@@ -313,7 +313,7 @@ export type SessionCreateInput = {
   id?: string
   name: string
   membershipNumber: string
-  phoneNumber: string
+  phoneNumber?: string | null
   partySize: number
   isPrivate?: boolean
   checkedInAt?: Date | string
@@ -325,7 +325,7 @@ export type SessionUncheckedCreateInput = {
   id?: string
   name: string
   membershipNumber: string
-  phoneNumber: string
+  phoneNumber?: string | null
   partySize: number
   isPrivate?: boolean
   checkedInAt?: Date | string
@@ -337,7 +337,7 @@ export type SessionUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   membershipNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   partySize?: Prisma.IntFieldUpdateOperationsInput | number
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   checkedInAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -349,7 +349,7 @@ export type SessionUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   membershipNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   partySize?: Prisma.IntFieldUpdateOperationsInput | number
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   checkedInAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -361,7 +361,7 @@ export type SessionCreateManyInput = {
   id?: string
   name: string
   membershipNumber: string
-  phoneNumber: string
+  phoneNumber?: string | null
   partySize: number
   isPrivate?: boolean
   checkedInAt?: Date | string
@@ -373,7 +373,7 @@ export type SessionUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   membershipNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   partySize?: Prisma.IntFieldUpdateOperationsInput | number
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   checkedInAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -385,7 +385,7 @@ export type SessionUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   membershipNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   partySize?: Prisma.IntFieldUpdateOperationsInput | number
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   checkedInAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -439,6 +439,10 @@ export type SessionSumOrderByAggregateInput = {
 
 export type StringFieldUpdateOperationsInput = {
   set?: string
+}
+
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
 }
 
 export type IntFieldUpdateOperationsInput = {
@@ -520,7 +524,7 @@ export type $SessionPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     id: string
     name: string
     membershipNumber: string
-    phoneNumber: string
+    phoneNumber: string | null
     partySize: number
     isPrivate: boolean
     checkedInAt: Date

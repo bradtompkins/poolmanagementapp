@@ -14,7 +14,9 @@ export const CheckInSchema = z.object({
     .regex(/^\d+$/, "Membership number must contain only digits"),
   phoneNumber: z
     .string()
-    .regex(/^\d{10}$/, "Phone number must be exactly 10 digits"),
+    .regex(/^\d{10}$/, "Phone number must be exactly 10 digits")
+    .optional()
+    .or(z.literal("")),
   partySize: z
     .number()
     .int("Party size must be an integer")

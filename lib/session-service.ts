@@ -28,7 +28,7 @@ export async function checkIn(data: CheckInInput): Promise<Session> {
       data: {
         name: data.name,
         membershipNumber: data.membershipNumber,
-        phoneNumber: data.phoneNumber,
+        phoneNumber: data.phoneNumber || null,
         partySize: data.partySize,
         isPrivate: data.isPrivate,
         isActive: true,

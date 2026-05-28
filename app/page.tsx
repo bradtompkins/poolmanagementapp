@@ -22,7 +22,8 @@ export default function CheckInPage() {
   const [name, setName] = useState('');
   const [membershipNumber, setMembershipNumber] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [partySize, setPartySize] = useState<number>(1);
+  const [memberCount, setMemberCount] = useState<number>(1);
+  const [guestCount, setGuestCount] = useState<number>(0);
   const [isPrivate, setIsPrivate] = useState(false);
 
   // UI state
@@ -50,7 +51,7 @@ export default function CheckInPage() {
           name,
           membershipNumber,
           phoneNumber,
-          partySize,
+          partySize: memberCount + guestCount,
           isPrivate,
         }),
       });
@@ -61,7 +62,8 @@ export default function CheckInPage() {
         setName('');
         setMembershipNumber('');
         setPhoneNumber('');
-        setPartySize(1);
+        setMemberCount(1);
+        setGuestCount(0);
         setIsPrivate(false);
         return;
       }
@@ -201,17 +203,15 @@ export default function CheckInPage() {
           {/* Phone Number */}
           <div style={styles.fieldGroup}>
             <label htmlFor="phoneNumber" style={styles.label}>
-              Phone Number <span style={styles.required} aria-hidden="true">*</span>
+              Phone Number
             </label>
             <input
               id="phoneNumber"
               type="text"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
-              required
               disabled={loading}
-              aria-required="true"
-              aria-describedby={fieldErrors.phoneNumber ? 'phoneNumber-error' : undefined}
+              aria-describedby="phoneNumber-description phoneNumber-error"
               aria-invalid={!!fieldErrors.phoneNumber}
               style={{
                 ...styles.input,
@@ -221,6 +221,9 @@ export default function CheckInPage() {
               inputMode="numeric"
               maxLength={10}
             />
+            <span id="phoneNumber-description" style={styles.fieldDescription}>
+              Please input phone to gain access to beverage specials and pool experience polls!
+            </span>
             {fieldErrors.phoneNumber && (
               <span id="phoneNumber-error" style={styles.fieldError} role="alert">
                 {fieldErrors.phoneNumber}
@@ -229,34 +232,62 @@ export default function CheckInPage() {
           </div>
 
           {/* Party Size */}
-          <div style={styles.fieldGroup}>
-            <label htmlFor="partySize" style={styles.label}>
+          <fieldset style={{ ...styles.fieldGroup, border: 'none', padding: 0, margin: '0 0 1.25rem' }}>
+            <legend style={styles.label}>
               Party Size <span style={styles.required} aria-hidden="true">*</span>
-            </label>
-            <input
-              id="partySize"
-              type="number"
-              value={partySize}
-              onChange={(e) => setPartySize(Number(e.target.value))}
-              required
-              min={1}
-              max={20}
-              disabled={loading}
-              aria-required="true"
-              aria-describedby={fieldErrors.partySize ? 'partySize-error' : undefined}
-              aria-invalid={!!fieldErrors.partySize}
-              style={{
-                ...styles.input,
-                ...styles.inputNarrow,
-                ...(fieldErrors.partySize ? styles.inputError : {}),
-              }}
-            />
+            </legend>
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end' }}>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <label htmlFor="memberCount" style={{ ...styles.label, fontSize: '0.8125rem' }}>
+                  Members
+                </label>
+                <input
+                  id="memberCount"
+                  type="number"
+                  value={memberCount}
+                  onChange={(e) => setMemberCount(Number(e.target.value))}
+                  required
+                  min={1}
+                  max={20}
+                  disabled={loading}
+                  aria-required="true"
+                  aria-describedby={fieldErrors.partySize ? 'partySize-error' : undefined}
+                  aria-invalid={!!fieldErrors.partySize}
+                  style={{
+                    ...styles.input,
+                    ...styles.inputNarrow,
+                    ...(fieldErrors.partySize ? styles.inputError : {}),
+                  }}
+                />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <label htmlFor="guestCount" style={{ ...styles.label, fontSize: '0.8125rem' }}>
+                  Guests
+                </label>
+                <input
+                  id="guestCount"
+                  type="number"
+                  value={guestCount}
+                  onChange={(e) => setGuestCount(Number(e.target.value))}
+                  min={0}
+                  max={20}
+                  disabled={loading}
+                  aria-describedby={fieldErrors.partySize ? 'partySize-error' : undefined}
+                  aria-invalid={!!fieldErrors.partySize}
+                  style={{
+                    ...styles.input,
+                    ...styles.inputNarrow,
+                    ...(fieldErrors.partySize ? styles.inputError : {}),
+                  }}
+                />
+              </div>
+            </div>
             {fieldErrors.partySize && (
               <span id="partySize-error" style={styles.fieldError} role="alert">
                 {fieldErrors.partySize}
               </span>
             )}
-          </div>
+          </fieldset>
 
           {/* Private Session */}
           <div style={styles.checkboxGroup}>
@@ -339,7 +370,9 @@ const styles: Record<string, React.CSSProperties> = {
   input: {
     padding: '0.5rem 0.75rem',
     fontSize: '1rem',
-    border: '1px solid #cbd5e0',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderColor: '#cbd5e0',
     borderRadius: '4px',
     outline: 'none',
     transition: 'border-color 0.15s',
@@ -356,6 +389,11 @@ const styles: Record<string, React.CSSProperties> = {
     marginTop: '0.25rem',
     fontSize: '0.8125rem',
     color: '#e53e3e',
+  },
+  fieldDescription: {
+    marginTop: '0.375rem',
+    fontSize: '0.8125rem',
+    color: '#718096',
   },
   checkboxGroup: {
     display: 'flex',
@@ -430,7 +468,9 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'inline-block',
     width: '0.875rem',
     height: '0.875rem',
-    border: '2px solid rgba(255,255,255,0.4)',
+    borderWidth: '2px',
+    borderStyle: 'solid',
+    borderColor: 'rgba(255,255,255,0.4)',
     borderTopColor: '#ffffff',
     borderRadius: '50%',
     animation: 'spin 0.7s linear infinite',

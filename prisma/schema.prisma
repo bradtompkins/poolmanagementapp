@@ -14,7 +14,7 @@ model Session {
   id               String    @id @default(cuid())
   name             String
   membershipNumber String
-  phoneNumber      String
+  phoneNumber      String?
   partySize        Int
   isPrivate        Boolean   @default(false)
   checkedInAt      DateTime  @default(now())
