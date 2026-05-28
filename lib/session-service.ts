@@ -99,7 +99,7 @@ export async function getActiveSessions(role: UserRole): Promise<SessionView[]> 
     };
 
     if (role === 'admin') {
-      view.phoneNumber = session.phoneNumber;
+      view.phoneNumber = session.phoneNumber ?? undefined;
     }
 
     return view;
