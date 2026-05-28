@@ -24,6 +24,7 @@
 | `@vitejs/plugin-react` | React support in Vitest |
 | `@vitest/coverage-v8` | Code coverage |
 | `msw` | HTTP mocking for client-side tests |
+| `jsdom` | DOM environment for Vitest (required by `environment: "jsdom"`) |
 
 ## Common Commands
 

@@ -8,5 +8,34 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id               String    @id @default(cuid())
+  name             String
+  membershipNumber String
+  phoneNumber      String
+  partySize        Int
+  isPrivate        Boolean   @default(false)
+  checkedInAt      DateTime  @default(now())
+  checkedOutAt     DateTime?
+  isActive         Boolean   @default(true)
+
+  @@index([membershipNumber, isActive])
+  @@index([isActive])
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  passwordHash String
+  role         UserRole @default(PUBLIC)
+  createdAt    DateTime @default(now())
+}
+
+enum UserRole {
+  ADMIN
+  STAFF
+  PUBLIC
 }

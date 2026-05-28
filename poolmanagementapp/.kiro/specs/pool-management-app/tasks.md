@@ -6,7 +6,7 @@ Build a Next.js App Router web application for pool facility check-in/check-out 
 
 ## Tasks
 
-- [ ] 1. Project Scaffolding and Configuration
+- [x] 1. Project Scaffolding and Configuration
   - Initialize Next.js project with TypeScript and App Router in the workspace root
   - Install all required dependencies: prisma, @prisma/client, next-auth, bcryptjs, zod, fast-check, vitest, @vitejs/plugin-react, msw
   - Initialize Prisma and configure DATABASE_URL in .env.example
@@ -15,7 +15,7 @@ Build a Next.js App Router web application for pool facility check-in/check-out 
   - Update tech.md and structure.md steering files to reflect the finalized stack and folder layout
   - **Requirements**: All
 
-- [~] 2. Database Schema and Prisma Setup
+- [x] 2. Database Schema and Prisma Setup
   - Write prisma/schema.prisma with Session model (id, name, membershipNumber, phoneNumber, partySize, isPrivate, checkedInAt, checkedOutAt, isActive) and User model with UserRole enum (ADMIN, STAFF, PUBLIC)
   - Add composite indexes @@index([membershipNumber, isActive]) and @@index([isActive]) to the Session model
   - Create initial migration and generate Prisma client
@@ -23,14 +23,14 @@ Build a Next.js App Router web application for pool facility check-in/check-out 
   - Create prisma/seed.ts that creates one admin and one staff user for development
   - **Requirements**: Requirements 1, 3, 9
 
-- [~] 3. Validation Service
+- [x] 3. Validation Service
   - Create lib/validation.ts with Zod schemas for CheckInInput: name non-empty string, membershipNumber numeric-only string, phoneNumber exactly 10 digits, partySize integer 1-20 inclusive, isPrivate boolean
   - Add CheckOutInput Zod schema: membershipNumber numeric string
   - Export validateCheckIn and validateCheckOut functions returning typed data or structured ValidationError[]
   - Write unit tests in tests/unit/validation.test.ts covering all valid and invalid field combinations for every rule
   - **Requirements**: Requirements 1, 10
 
-- [~] 4. Session Service
+- [x] 4. Session Service
   - Create lib/session-service.ts implementing checkIn(data: CheckInInput): Promise<Session> using a Prisma transaction
   - Implement checkOut(membershipNumber: string): Promise<CheckOutResult> setting checkedOutAt and isActive=false in a transaction; return not_found if no active session exists
   - Implement findActiveSession(membershipNumber: string): Promise<Session | null>
@@ -38,62 +38,62 @@ Build a Next.js App Router web application for pool facility check-in/check-out 
   - Write unit tests in tests/unit/session-service.test.ts with a mocked Prisma client covering all four methods and all role-filtering combinations
   - **Requirements**: Requirements 1, 2, 3, 4, 5, 6, 7, 9
 
-- [~] 5. SSE Broadcaster
+- [x] 5. SSE Broadcaster
   - Create lib/sse-broadcaster.ts with a singleton SSEBroadcaster class implementing subscribe(clientId, role, writer), unsubscribe(clientId), and broadcast(event: PoolStatusEvent)
   - broadcast() iterates all connected clients, filters SessionView[] per each client's role, and writes SSE-formatted event strings to each client's WritableStreamDefaultWriter
   - Handle write errors per client gracefully by removing disconnected clients without crashing the broadcaster
   - Write unit tests in tests/unit/sse-broadcaster.test.ts covering subscribe/unsubscribe, broadcast delivery, and role-based filtering per client
   - **Requirements**: Requirements 5, 6, 7, 8
 
-- [~] 6. NextAuth Configuration and Role Resolution
+- [x] 6. NextAuth Configuration and Role Resolution
   - Create app/api/auth/[...nextauth]/route.ts with NextAuth handler using the Credentials provider
   - Configure Credentials provider to look up a User record by email and validate a bcryptjs-hashed password
   - Add role to the NextAuth JWT and session callbacks so session.user.role is available in all route handlers
   - Create lib/auth.ts exporting getServerSession wrapper and a resolveRole(session): UserRole helper returning 'public' for unauthenticated requests
   - **Requirements**: Requirements 6, 7
 
-- [~] 7. API Route — Check-In (POST /api/sessions/checkin)
+- [x] 7. API Route — Check-In (POST /api/sessions/checkin)
   - Create app/api/sessions/checkin/route.ts parsing and validating request body with validateCheckIn; return HTTP 400 with structured field errors on validation failure
   - Call findActiveSession; if active session exists for the membership number return HTTP 409 with { status: 'already_checked_in', sessionId } so the client can show the Returning Member Prompt
   - Call sessionService.checkIn(data) in a try/catch; return HTTP 201 with the created session on success; return HTTP 500 on database error without confirming success
   - After successful check-in call sseBroadcaster.broadcast() with the updated active session list
   - **Requirements**: Requirements 1, 2, 8, 9, 10
 
-- [~] 8. API Route — Check-Out (POST /api/sessions/checkout)
+- [x] 8. API Route — Check-Out (POST /api/sessions/checkout)
   - Create app/api/sessions/checkout/route.ts parsing and validating request body with validateCheckOut; return HTTP 400 on validation failure
   - Call sessionService.checkOut(membershipNumber); return HTTP 200 with { status: 'checked_out' } on success; return HTTP 404 with { status: 'not_found' } if no active session
   - Return HTTP 500 on database error without marking the session inactive
   - After successful check-out call sseBroadcaster.broadcast() with the updated active session list
   - **Requirements**: Requirements 3, 8, 9
 
-- [~] 9. API Routes — Sessions GET and SSE
+- [x] 9. API Routes — Sessions GET and SSE
   - Create app/api/sessions/route.ts resolving role via resolveRole, calling getActiveSessions(role), returning JSON; return HTTP 401/403 for requests to phone-number-inclusive data from insufficient roles
   - Create app/api/sse/route.ts resolving role, subscribing the client to sseBroadcaster, sending current pool state immediately on connect, streaming events until client disconnects
   - Implement Last-Event-ID reconnection: on reconnect send the current pool state as the first event so the client is never stale
   - Set correct SSE response headers: Content-Type text/event-stream, Cache-Control no-cache, Connection keep-alive
   - **Requirements**: Requirements 5, 6, 7, 8
 
-- [~] 10. Check-In Form Page
+- [x] 10. Check-In Form Page
   - Create app/page.tsx as the Check-In page with a form collecting name, membership number, phone number, party size, and an isPrivate checkbox
   - Implement client-side form state with useState; submit via fetch POST to /api/sessions/checkin
   - On HTTP 409 (already checked in) display the ReturningMemberPrompt component
   - On HTTP 201 display a success confirmation message; on HTTP 400 display per-field validation error messages; on HTTP 500 display a generic error message
   - **Requirements**: Requirements 1, 2, 10
 
-- [~] 11. Returning Member Prompt Component
+- [x] 11. Returning Member Prompt Component
   - Create components/ReturningMemberPrompt.tsx as a modal dialog with "Continue Session" and "Check Out" buttons and a visible 60-second countdown timer
   - Implement 60-second auto-dismiss with setTimeout; on timeout dismiss the prompt and retain the existing session with no API call
   - "Continue Session" button dismisses the prompt immediately with no API call
   - "Check Out" button calls POST /api/sessions/checkout with the membership number then dismisses the prompt and shows a check-out confirmation
   - **Requirements**: Requirement 2
 
-- [~] 12. Check-Out Form Page
+- [x] 12. Check-Out Form Page
   - Create app/checkout/page.tsx with a form collecting only the membership number
   - Submit via fetch POST to /api/sessions/checkout
   - On success display a departure confirmation; on HTTP 404 display an informational message that no active session was found; on HTTP 500 display a generic error message
   - **Requirements**: Requirement 3
 
-- [~] 13. Pool Status Page
+- [x] 13. Pool Status Page
   - Create app/status/page.tsx as a client component that fetches initial session data from /api/sessions on mount
   - Connect to /api/sse using EventSource; update displayed sessions and occupancy on each received event without a full page reload
   - Display total occupancy (sum of all active party sizes including private) and total checked-in member count prominently
@@ -101,7 +101,7 @@ Build a Next.js App Router web application for pool facility check-in/check-out 
   - Handle SSE disconnection with automatic reconnect using Last-Event-ID header
   - **Requirements**: Requirements 4, 5, 6, 7, 8
 
-- [~] 14. Property-Based Tests
+- [x] 14. Property-Based Tests
   - Create tests/pbt/property1.test.ts: generate valid CheckInInput, call checkIn(), verify DB record matches all input fields (Property 1: valid check-in creates persisted active session)
   - Create tests/pbt/property2.test.ts: generate invalid CheckInInput with at least one bad field, call checkIn(), verify session count unchanged (Property 2: invalid inputs rejected without side effects)
   - Create tests/pbt/property3.test.ts: generate active session + checkout request, verify only that session is closed and no others modified (Property 3: check-out closes correct session)
@@ -114,7 +114,7 @@ Build a Next.js App Router web application for pool facility check-in/check-out 
   - Each test tagged with // Feature: pool-management-app, Property N: <property_text> and runs minimum 100 iterations
   - **Requirements**: All
 
-- [~] 15. Integration Tests
+- [x] 15. Integration Tests
   - Create tests/integration/checkin-flow.test.ts: full check-in then GET /api/sessions and verify session appears in response
   - Create tests/integration/checkout-flow.test.ts: check-in then check-out then verify session removed from active list
   - Create tests/integration/role-filtering.test.ts: verify public/staff/admin API responses match the visibility matrix for all fields
